@@ -4,6 +4,7 @@ import LinkGrid from './components/LinkGrid'
 import Header from './components/Header'
 import AddLink from './components/AddLink'
 import Pagination from './components/Pagination'
+import { fetchLinks, addLink, deleteLink } from './services/linkService.js'
 
 const API_URL = 'http://localhost:4000/links'
 
@@ -14,7 +15,7 @@ function App() {
 
   const [showForm, setShowForm] = useState(false)
 
-  const [searchQuery, setSearchQuery] = useState('')
+  const [searchQuery, setSearchQuery] = useState(localStorage.getItem("searchQuery" || ''))
   const debouncedSearchTerm = useDebounce(searchQuery, 300) // 300ms delay
 
   const [currentPage, setCurrentPage] = useState(
@@ -24,9 +25,8 @@ function App() {
     () => Number(localStorage.getItem('linksPerPage')) || 10
   )
 
-
-  const toggleForm = ()=> {
-    setShowForm(prev => !prev)
+  const toggleForm = () => {
+    setShowForm((prev) => !prev)
   }
 
   const prevLPP = useRef(linksPerPage)
@@ -47,8 +47,7 @@ function App() {
 
   // Fetch all links on component mount
   useEffect(() => {
-    fetch(API_URL)
-      .then((res) => res.json())
+    fetchLinks()
       .then((data) => {
         const updatedData = data.map(({ id, title, url, tags }) => {
           if (title === url) return { id, title: '(No Title)', url, tags }
@@ -59,21 +58,37 @@ function App() {
       .catch(console.error)
   }, [])
 
+  // setting and clearing local storage
+  useEffect(() => {
+  if (debouncedSearchTerm && debouncedSearchTerm.trim() === "") {
+    localStorage.removeItem("searchQuery");
+  } else {
+    localStorage.setItem("searchQuery", debouncedSearchTerm);
+  }
+}, [debouncedSearchTerm]);
+
   //filter
   useEffect(() => {
     const query = debouncedSearchTerm.toLowerCase()
+
     const filtered = allLinks.filter(
-      ({ title = '', url = '', tags = [] }) =>
-        title.toLowerCase().includes(query) || url.toLowerCase().includes(query) || tags.includes(query)
+      ({ title, url, tags }) =>
+        title.toLowerCase().includes(query) ||
+        url.toLowerCase().includes(query) ||
+        tags.includes(query)
     )
+    
     setFilteredLinks(filtered)
     setCurrentPage(1) // reset pagination when search changes
   }, [debouncedSearchTerm, allLinks])
 
   // slicing visible links array
   useEffect(() => {
-    if (!filteredLinks.length) return
-    
+    if (!filteredLinks.length) {
+      setVisibleLinks(filteredLinks)
+      return
+    }
+
     const previous = prevLPP.current
     const current = linksPerPage
 
@@ -109,20 +124,23 @@ function App() {
   }, [filteredLinks, linksPerPage, currentPage])
 
   // Create a new link
-  const handleAdd = async (newLink) => {
-    const res = await fetch(API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(newLink),
-    })
-    const created = await res.json()
-    setAllLinks((prev) => [...prev, created])
+  const handleAdd = async (link) => {
+    try {
+      const created = await addLink(link)
+      setAllLinks((prev) => [...prev, created])
+    } catch (e) {
+      console.error(e)
+    }
   }
 
   // Delete a link by id
   const handleDelete = async (id) => {
-    await fetch(`${API_URL}/${id}`, { method: 'DELETE' })
-    setAllLinks((prev) => prev.filter((link) => link.id !== id))
+    try {
+      await deleteLink(id)
+      setAllLinks((prev) => prev.filter((link) => link.id !== id))
+    } catch (e) {
+      console.error(e)
+    }
   }
 
   // add tags to an existing link
@@ -130,31 +148,37 @@ function App() {
     const res = await fetch(`${API_URL}/${id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({tags: newTags}),
+      body: JSON.stringify({ tags: newTags }),
     })
     const updated = await res.json()
-    setAllLinks(prev => prev.map(link => {
-      if(link.id === id) return updated
-      else return link
-    }))
+    setAllLinks((prev) =>
+      prev.map((link) => {
+        if (link.id === id) return updated
+        else return link
+      })
+    )
   }
 
   return (
     <main className="max-w-5xl mx-auto p-6 space-y-6">
-      <Header toggleForm={toggleForm}/>
+      <Header toggleForm={toggleForm} />
 
-      {showForm && <AddLink handleAdd={handleAdd} toggleForm={toggleForm}/>}
+      {showForm && <AddLink handleAdd={handleAdd} toggleForm={toggleForm} />}
 
       {/* Search Bar */}
       <input
         type="text"
-        placeholder="Search by title or URL..."
+        placeholder="Search by title or URL, or tags..."
         className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:ring-blue-200"
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
       />
 
-      <LinkGrid links={visibleLinks} handleDelete={handleDelete} handleUpdate={handleUpdate} />
+      <LinkGrid
+        links={visibleLinks}
+        handleDelete={handleDelete}
+        handleUpdate={handleUpdate}
+      />
 
       <Pagination
         currentPage={currentPage}

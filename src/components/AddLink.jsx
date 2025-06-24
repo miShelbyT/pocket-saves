@@ -16,7 +16,6 @@ function AddLink({ handleAdd, toggleForm }) {
     e.preventDefault()
     try {
       handleAdd(newLink)
-      console.log("success!")
       toggleForm()
     }
     catch(e) {
