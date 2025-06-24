@@ -167,7 +167,7 @@ function App() {
     <main className="max-w-5xl mx-auto p-6 space-y-6">
       <Header toggleForm={toggleForm} />
 
-      {showForm && <AddLink handleAdd={handleAdd} toggleForm={toggleForm} />}
+      {showForm && <AddLink handleAdd={handleAdd} toggleForm={toggleForm}/>}
 
       {/* Search Bar */}
       <input

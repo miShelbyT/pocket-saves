@@ -1,11 +1,19 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Tag } from 'lucide-react'
 
 export default function LinkTile({ link, handleDelete, handleUpdate }) {
   const [showConfirm, setShowConfirm] = useState(false)
   const [showTagModal, setShowTagModal] = useState(false)
   const [newTags, setNewTags] = useState(link.tags.join(", "))
+
+  const inputRef = useRef(null);
   const imgUrl = `https://picsum.photos/seed/${link.id}/600/400`
+
+  useEffect(() => {
+  if (showTagModal && inputRef.current) {
+    inputRef.current.focus();
+  }
+}, [showTagModal]);
 
   const handleTagSubmit = (e) => {
     e.preventDefault()
@@ -87,6 +95,7 @@ export default function LinkTile({ link, handleDelete, handleUpdate }) {
             </h2>
             <form onSubmit={handleTagSubmit} className="space-y-4">
               <input
+                ref={inputRef}
                 type="text"
                 value={newTags}
                 onChange={(e) => setNewTags(e.target.value)}

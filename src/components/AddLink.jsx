@@ -1,15 +1,24 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 
 function AddLink({ handleAdd, toggleForm }) {
-
   const [newLink, setNewLink] = useState({
-    title: "",
-    url: "",
-    tags: []
-  }) 
+    title: '',
+    url: '',
+    tags: [],
+  })
+
+  const inputRef = useRef(null)
+
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus()
+    }
+  }, [])
+
+  
 
   const handleChange = (e) => {
-    setNewLink(prev => ({...prev, [e.target.name]: e.target.value}))
+    setNewLink((prev) => ({ ...prev, [e.target.name]: e.target.value }))
   }
 
   const handleSubmit = (e) => {
@@ -17,8 +26,7 @@ function AddLink({ handleAdd, toggleForm }) {
     try {
       handleAdd(newLink)
       toggleForm()
-    }
-    catch(e) {
+    } catch (e) {
       console.error(e)
     }
   }
@@ -32,6 +40,7 @@ function AddLink({ handleAdd, toggleForm }) {
         <div>
           <label className="block text-sm font-medium">Title</label>
           <input
+            ref={inputRef}
             type="text"
             name="title"
             value={newLink.title}
