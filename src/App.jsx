@@ -4,9 +4,12 @@ import LinkGrid from './components/LinkGrid'
 import Header from './components/Header'
 import AddLink from './components/AddLink'
 import Pagination from './components/Pagination'
-import { fetchLinks, addLink, deleteLink } from './services/linkService.js'
-
-const API_URL = 'http://localhost:4000/links'
+import {
+  fetchLinks,
+  addLink,
+  deleteLink,
+  editLink,
+} from './services/linkService.js'
 
 function App() {
   const [allLinks, setAllLinks] = useState([])
@@ -15,7 +18,9 @@ function App() {
 
   const [showForm, setShowForm] = useState(false)
 
-  const [searchQuery, setSearchQuery] = useState(localStorage.getItem("searchQuery" || ''))
+  const [searchQuery, setSearchQuery] = useState(
+    localStorage.getItem('searchQuery' || '')
+  )
   const debouncedSearchTerm = useDebounce(searchQuery, 300) // 300ms delay
 
   const [currentPage, setCurrentPage] = useState(
@@ -60,12 +65,12 @@ function App() {
 
   // setting and clearing local storage
   useEffect(() => {
-  if (debouncedSearchTerm && debouncedSearchTerm.trim() === "") {
-    localStorage.removeItem("searchQuery");
-  } else {
-    localStorage.setItem("searchQuery", debouncedSearchTerm);
-  }
-}, [debouncedSearchTerm]);
+    if (debouncedSearchTerm && debouncedSearchTerm.trim() === '') {
+      localStorage.removeItem('searchQuery')
+    } else {
+      localStorage.setItem('searchQuery', debouncedSearchTerm)
+    }
+  }, [debouncedSearchTerm])
 
   //filter
   useEffect(() => {
@@ -77,7 +82,7 @@ function App() {
         url.toLowerCase().includes(query) ||
         tags.includes(query)
     )
-    
+
     setFilteredLinks(filtered)
     setCurrentPage(1) // reset pagination when search changes
   }, [debouncedSearchTerm, allLinks])
@@ -145,18 +150,17 @@ function App() {
 
   // add tags to an existing link
   const handleUpdate = async (id, newTags) => {
-    const res = await fetch(`${API_URL}/${id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ tags: newTags }),
-    })
-    const updated = await res.json()
-    setAllLinks((prev) =>
-      prev.map((link) => {
-        if (link.id === id) return updated
-        else return link
-      })
-    )
+    try {
+      const updated = await editLink(id, newTags)
+      setAllLinks((prev) =>
+        prev.map((link) => {
+          if (link.id === id) return updated
+          else return link
+        })
+      )
+    } catch (e) {
+      console.error(e)
+    }
   }
 
   return (
