@@ -14,9 +14,9 @@ If you are developing a production application, we recommend using TypeScript wi
 
 ## Pocket Link Saves 📚
 
-This app was "vibe coded" using ChatGPT. Dependencies include: 
+This app was mostly "vibe coded" using ChatGPT. Dependencies include: 
 * react-router-dom for client side routing
-* lucide-react for "Add Link" hyperlink icon
+* lucide-react for icons (tag and link icons)
 * tailwind, postcss and autoprefixer for most css styles
 * json-server to mock a lightweight JSON backend API
 
@@ -26,5 +26,5 @@ The user can view (or visit) their saved links, add a link, add/edit/remove tags
 * type `npm run server` to start the json-server
 * in a separate terminal, type `npm run dev` to start the react server on port 5173
 
-* if the user wants to import their own links from a csv file, there is a script to handle this. Simply drop the csv values into `your-file.csv` From the root of the application run `node fresh-db.js`. This will populate a new file called new-db.json, instead of overwriting the existing file. The in line 8 of package.json replace this: ```"server": "json-server --watch db.json --port 4000"```, with this: ```"server": "json-server --watch new-db.json --port 4000"```
+* if the user wants to import their own links from a csv file, there is a script to handle this. Simply drop the csv values into `your-file.csv` From the root of the application run `node fresh-db.js`. This will populate a new file called new-db.json, instead of overwriting the existing db file. The in line 8 of package.json replace this: ```"server": "json-server --watch db.json --port 4000"```, with this: ```"server": "json-server --watch new-db.json --port 4000"```
 * if the user wants to clean their database to update ids to be incremental and starting from 1, and to ensure that each item in the db has a tags array, just run `node clean-db.js`
