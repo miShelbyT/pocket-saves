@@ -94,12 +94,6 @@
       "tags": []
     },
     {
-      "id": "13",
-      "title": "Daily Garnish » Recipes",
-      "url": "http://www.dailygarnish.com/recipes?recipe_id=6007562",
-      "tags": []
-    },
-    {
       "id": "14",
       "title": "New Atheism, Moral Realism, and Animal Rights: Some Preliminary Reflections",
       "url": "http://www.abolitionistapproach.com/new-atheism-and-animal-ethics-some-reflections/",
@@ -232,7 +226,11 @@
       "id": "37",
       "title": "http://food52.com/recipes/21761-almond-joy-candy-bars",
       "url": "http://food52.com/recipes/21761-almond-joy-candy-bars",
-      "tags": []
+      "tags": [
+        "coconut",
+        "chocolate",
+        "almond"
+      ]
     },
     {
       "id": "38",
@@ -250,7 +248,9 @@
       "id": "40",
       "title": "http://www.epicurious.com/recipes/food/views/Spiced-Milk-Tea-Masala-Chai-355421",
       "url": "http://www.epicurious.com/recipes/food/views/Spiced-Milk-Tea-Masala-Chai-355421",
-      "tags": []
+      "tags": [
+        "beverage"
+      ]
     },
     {
       "id": "41",
@@ -346,7 +346,9 @@
       "id": "56",
       "title": "Jalapeño Cornbread (Vegan) - User Submitted - Breads - Recipes - Cuisinart.",
       "url": "https://www.cuisinart.com/recipes/breads/7187.html",
-      "tags": []
+      "tags": [
+        "savory"
+      ]
     },
     {
       "id": "57",
@@ -454,7 +456,9 @@
       "id": "75",
       "title": "https://www.tablespoon.com/recipes/vegan-quinoa-and-black-beans/939fd08c-1eeb-4720-85bd-fff7a114e0c7",
       "url": "https://www.tablespoon.com/recipes/vegan-quinoa-and-black-beans/939fd08c-1eeb-4720-85bd-fff7a114e0c7",
-      "tags": []
+      "tags": [
+        "savory"
+      ]
     },
     {
       "id": "76",
@@ -601,12 +605,6 @@
       "tags": []
     },
     {
-      "id": "100",
-      "title": "Recipes - Thug Kitchen",
-      "url": "http://www.thugkitchen.com/recipes",
-      "tags": []
-    },
-    {
       "id": "101",
       "title": "http://detoxinista.com/2014/09/homemade-nutella-dairy-free-refined-sugar-free/",
       "url": "http://detoxinista.com/2014/09/homemade-nutella-dairy-free-refined-sugar-free/",
@@ -634,7 +632,9 @@
       "id": "105",
       "title": "https://food52.com/recipes/31697-no-fuss-vegan-cornbread",
       "url": "https://food52.com/recipes/31697-no-fuss-vegan-cornbread",
-      "tags": []
+      "tags": [
+        "savory"
+      ]
     },
     {
       "id": "106",
@@ -814,7 +814,10 @@
       "id": "135",
       "title": "Vegan Palak Paneer Recipe - Delicious Techniques",
       "url": "http://norecipes.com/recipe/palak-paneer",
-      "tags": []
+      "tags": [
+        "fave",
+        "savory"
+      ]
     },
     {
       "id": "136",
@@ -5686,15 +5689,6 @@
       "title": "Chef Chloe Recipes",
       "url": "https://www.chefchloe.com/recipes",
       "tags": []
-    },
-    {
-      "id": "30ed",
-      "title": "this is a context test",
-      "url": "http://test.com",
-      "tags": [
-        "testing",
-        "test"
-      ]
     }
   ]
 }

@@ -12,10 +12,10 @@ export default function LinkTile({ link }) {
   const imgUrl = `https://picsum.photos/seed/${link.id}/600/400`
 
   useEffect(() => {
-  if (inputRef.current) {
+  if (showTagModal && inputRef.current) {
     inputRef.current.focus();
   }
-}, []);
+}, [showTagModal]);
 
   const handleTagSubmit = (e) => {
     e.preventDefault()

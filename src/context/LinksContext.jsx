@@ -46,6 +46,7 @@ export function LinksProvider({ children }) {
   const handleUpdate = async (id, data) => {
     try {
       const updated = await updateLink(id, data)
+      updated.title = (updated.title === updated.url) ? "(No Title)" : updated.title
       setAllLinks((prev) =>
         prev.map((link) => (link.id === id ? updated : link))
       )
