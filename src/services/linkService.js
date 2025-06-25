@@ -18,7 +18,7 @@ export async function addLink(newLink) {
 }
 
 // EDIT TAGS on existing link
-export async function editLink(id, newTags) {
+export async function updateLink(id, newTags) {
   const res = await fetch(`${BASE_URL}/${id}`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },

@@ -1,12 +1,14 @@
 import { useState, useRef, useEffect } from 'react'
+import { useLinks } from "../context/LinksContext";
 
-function AddLink({ handleAdd, toggleForm }) {
+function AddLink({ toggleForm }) {
   const [newLink, setNewLink] = useState({
     title: '',
     url: '',
     tags: [],
   })
 
+  const { handleAdd } = useLinks()
   const inputRef = useRef(null)
 
   useEffect(() => {

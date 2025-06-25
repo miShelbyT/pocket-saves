@@ -4,15 +4,10 @@ import LinkGrid from './components/LinkGrid'
 import Header from './components/Header'
 import AddLink from './components/AddLink'
 import Pagination from './components/Pagination'
-import {
-  fetchLinks,
-  addLink,
-  deleteLink,
-  editLink,
-} from './services/linkService.js'
+import { useLinks } from "./context/LinksContext";
 
 function App() {
-  const [allLinks, setAllLinks] = useState([])
+  
   const [filteredLinks, setFilteredLinks] = useState([])
   const [visibleLinks, setVisibleLinks] = useState([])
 
@@ -29,6 +24,8 @@ function App() {
   const [linksPerPage, setLinksPerPage] = useState(
     () => Number(localStorage.getItem('linksPerPage')) || 10
   )
+
+  const { allLinks } = useLinks()
 
   const toggleForm = () => {
     setShowForm((prev) => !prev)
@@ -50,18 +47,6 @@ function App() {
     setCurrentPage(x)
   }
 
-  // Fetch all links on component mount
-  useEffect(() => {
-    fetchLinks()
-      .then((data) => {
-        const updatedData = data.map(({ id, title, url, tags }) => {
-          if (title === url) return { id, title: '(No Title)', url, tags }
-          else return { id, title, url, tags }
-        })
-        setAllLinks(updatedData)
-      })
-      .catch(console.error)
-  }, [])
 
   // setting and clearing local storage
   useEffect(() => {
@@ -77,10 +62,10 @@ function App() {
     const query = debouncedSearchTerm.toLowerCase()
 
     const filtered = allLinks.filter(
-      ({ title, url, tags }) =>
+      ({ title = '', url = '', tags = [] }) =>
         title.toLowerCase().includes(query) ||
         url.toLowerCase().includes(query) ||
-        tags.includes(query)
+        tags.some((tag) => tag.toLowerCase().includes(query))
     )
 
     setFilteredLinks(filtered)
@@ -88,86 +73,44 @@ function App() {
   }, [debouncedSearchTerm, allLinks])
 
   // slicing visible links array
-  useEffect(() => {
-    if (!filteredLinks.length) {
-      setVisibleLinks(filteredLinks)
-      return
-    }
+useEffect(() => {
+  const previous = prevLPP.current;
+  const current = linksPerPage;
 
-    const previous = prevLPP.current
-    const current = linksPerPage
+  const maxIndex = filteredLinks.length - 1;
+  const start = Math.min((currentPage - 1) * current, maxIndex);
+  const end = Math.min(currentPage * current, filteredLinks.length);
 
-    const start = (currentPage - 1) * current
-    const end = currentPage * current
+  const safeSlice = (arr, s, e) => arr.slice(s, e).filter(Boolean);
 
-    if (current < previous) {
-      // Step 1: Keep all previous tiles temporarily
-      const temp = filteredLinks.slice(start, start + previous)
-
-      // Step 2: Mark the *extra* tiles with `fadingOut: true`
-      const marked = temp.map((link, idx) =>
-        idx >= current ? { ...link, fadingOut: true } : link
-      )
-
-      setVisibleLinks(marked)
-
-      // Step 3: After animation delay, remove extra tiles
-      setTimeout(() => {
-        setVisibleLinks(filteredLinks.slice(start, end))
-      }, 300) // fadeOut duration
-    } else {
-      const base = filteredLinks.slice(start, start + previous)
-      const incoming = filteredLinks.slice(start + previous, end)
-      const animated = [
-        ...base,
-        ...incoming.map((link) => ({ ...link, animate: 'fadeIn' })),
-      ]
-      setVisibleLinks(animated)
-    }
-
-    prevLPP.current = current
-  }, [filteredLinks, linksPerPage, currentPage])
-
-  // Create a new link
-  const handleAdd = async (link) => {
-    try {
-      const created = await addLink(link)
-      setAllLinks((prev) => [...prev, created])
-    } catch (e) {
-      console.error(e)
-    }
+  if (current < previous) {
+    const temp = safeSlice(filteredLinks, start, start + previous);
+    const marked = temp.map((link, idx) =>
+      idx >= current ? { ...link, fadingOut: true } : link
+    );
+    setVisibleLinks(marked);
+    setTimeout(() => {
+      setVisibleLinks(safeSlice(filteredLinks, start, end));
+    }, 300);
+  } else {
+    const base = safeSlice(filteredLinks, start, start + previous);
+    const incoming = safeSlice(filteredLinks, start + previous, end);
+    const animated = [
+      ...base,
+      ...incoming.map((link) => ({ ...link, animate: "fadeIn" })),
+    ];
+    setVisibleLinks(animated);
   }
 
-  // Delete a link by id
-  const handleDelete = async (id) => {
-    try {
-      await deleteLink(id)
-      setAllLinks((prev) => prev.filter((link) => link.id !== id))
-    } catch (e) {
-      console.error(e)
-    }
-  }
+  prevLPP.current = current;
+}, [filteredLinks, linksPerPage, currentPage]);
 
-  // add tags to an existing link
-  const handleUpdate = async (id, newTags) => {
-    try {
-      const updated = await editLink(id, newTags)
-      setAllLinks((prev) =>
-        prev.map((link) => {
-          if (link.id === id) return updated
-          else return link
-        })
-      )
-    } catch (e) {
-      console.error(e)
-    }
-  }
 
   return (
     <main className="max-w-5xl mx-auto p-6 space-y-6">
       <Header toggleForm={toggleForm} />
 
-      {showForm && <AddLink handleAdd={handleAdd} toggleForm={toggleForm}/>}
+      {showForm && <AddLink toggleForm={toggleForm} />}
 
       {/* Search Bar */}
       <input
@@ -178,11 +121,7 @@ function App() {
         onChange={(e) => setSearchQuery(e.target.value)}
       />
 
-      <LinkGrid
-        links={visibleLinks}
-        handleDelete={handleDelete}
-        handleUpdate={handleUpdate}
-      />
+      <LinkGrid links={visibleLinks} />
 
       <Pagination
         currentPage={currentPage}

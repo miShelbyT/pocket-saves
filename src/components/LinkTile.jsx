@@ -1,19 +1,21 @@
 import { useState, useRef, useEffect } from 'react'
 import { Tag } from 'lucide-react'
+import { useLinks } from "../context/LinksContext";
 
-export default function LinkTile({ link, handleDelete, handleUpdate }) {
+export default function LinkTile({ link }) {
   const [showConfirm, setShowConfirm] = useState(false)
   const [showTagModal, setShowTagModal] = useState(false)
   const [newTags, setNewTags] = useState(link.tags.join(", "))
 
+  const { handleDelete, handleUpdate } = useLinks()
   const inputRef = useRef(null);
   const imgUrl = `https://picsum.photos/seed/${link.id}/600/400`
 
   useEffect(() => {
-  if (showTagModal && inputRef.current) {
+  if (inputRef.current) {
     inputRef.current.focus();
   }
-}, [showTagModal]);
+}, []);
 
   const handleTagSubmit = (e) => {
     e.preventDefault()

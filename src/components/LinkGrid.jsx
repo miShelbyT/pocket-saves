@@ -1,6 +1,6 @@
 import LinkTile from './LinkTile'
 
-const LinkGrid = ({ links, handleDelete, handleUpdate }) => {
+const LinkGrid = ({ links }) => {
   if (links.length === 0) {
     return <p className="text-gray-500 text-center">No links to display</p>
   }
@@ -16,7 +16,7 @@ const LinkGrid = ({ links, handleDelete, handleUpdate }) => {
 
         return (
           <div key={link.id} className={classes}>
-            <LinkTile link={link} handleDelete={handleDelete} handleUpdate={handleUpdate}/>
+            <LinkTile link={link}/>
           </div>
         )
       })}
