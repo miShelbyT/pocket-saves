@@ -30,7 +30,7 @@ The user can view (or visit) their saved links, add a link, add/edit/remove tags
 
 * if the user wants to import their own links from a csv file, there is a script to handle this. Simply drop the csv values into `your-file.csv` From the root of the application run `node fresh-db.js`. This will populate a new file called new-db.json, instead of overwriting the existing db file. The in line 8 of package.json replace this: ```"server": "json-server --watch db.json --port 4000"```, with this: ```"server": "json-server --watch new-db.json --port 4000"```
 
-#### Note that current db object looks like this. The clean-db script is built to ensure these keys exist so the app doesn't break. (And yes, this recipe is very very good.)
+#### Note that current db object looks like this. The clean-db script is built to ensure these keys exist so the app doesn't break. (And yes, this recipe is very very good.) Please don't hesitate to reach out to me if you have any questions or suggestions for improvements.
 ```
 {
     "id": "925",
